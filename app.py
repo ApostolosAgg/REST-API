@@ -1,5 +1,3 @@
-import os
-
 from flask import Flask
 from flask_restful import Api
 from flask_jwt import JWT
@@ -10,10 +8,14 @@ from resources.store import Store, StoreList
 from security import authenticate, identity
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///myDB.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///myDB.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'T0l1$12345'
 api = Api(app)
+
+@app.before_first_request
+def create_tables():
+    db.create_all()
 
 jwt = JWT(app, authenticate, identity)  #/auth
 
